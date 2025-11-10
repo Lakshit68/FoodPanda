@@ -3,12 +3,14 @@ const { requireAuth } = require('../middleware/auth');
 const Order = require('../models/Order');
 const Restaurant = require('../models/Restaurant');
 const User = require('../models/User');
+const connectDB = require('../db');
 
 const router = express.Router();
 
 // POST /api/orders
 router.post('/', requireAuth, async (req, res, next) => {
   try {
+    await connectDB();
     const { restaurant: restaurantId, items, total, address } = req.body;
     const [user, restaurant] = await Promise.all([
       User.findById(req.user._id),
@@ -37,6 +39,7 @@ router.post('/', requireAuth, async (req, res, next) => {
 // GET /api/orders/my
 router.get('/my', requireAuth, async (req, res, next) => {
   try {
+    await connectDB();
     const orders = await Order.find({ user: req.user._id })
       .populate('restaurant')
       .populate('items.menuItem')
