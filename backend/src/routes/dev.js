@@ -1,7 +1,7 @@
 const express = require('express');
 const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
-
+const connectDB=require('../db');
 const router = express.Router();
 
 const restaurantsSample = [
@@ -17,6 +17,7 @@ const restaurantsSample = [
 
 router.post('/seed', async (req, res, next) => {
   try {
+    await connectDB();
     await Restaurant.deleteMany({});
     await MenuItem.deleteMany({});
 
