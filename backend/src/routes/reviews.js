@@ -2,7 +2,7 @@ const express = require('express');
 const { requireAuth } = require('../middleware/auth');
 const Review = require('../models/Review');
 const Restaurant = require('../models/Restaurant');
-const connectDB=require('../db);
+const connectDB=require('../db');
 const router = express.Router();
 
 // POST /api/reviews
