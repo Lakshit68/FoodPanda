@@ -35,7 +35,12 @@ export function AuthProvider({ children }){
     setUser(data.user);
   }
 
-  return <AuthCtx.Provider value={{ user, authenticated: !!user, loading, login, register, logout, togglePremium }}>{children}</AuthCtx.Provider>
+  async function loginWithGoogle(token) {
+    const { data } = await api.post('/auth/google-login', { token });
+    setUser(data.user);
+  }
+
+  return <AuthCtx.Provider value={{ user, authenticated: !!user, loading, login, register, logout, togglePremium, loginWithGoogle }}>{children}</AuthCtx.Provider>
 }
 
 export function useAuth(){ return useContext(AuthCtx) }

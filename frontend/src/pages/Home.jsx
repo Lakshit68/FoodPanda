@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import RestaurantQuickView from '../components/RestaurantQuickView.jsx'
 import { cuisines as cuisinesSample } from '../data/sample.js'
-import OfferAlert from '../components/OfferAlert.jsx'
 
 export default function Home() {
   const [q, setQ] = useState('')
   const [restaurants, setRestaurants] = useState([])
   const [offers, setOffers] = useState([])
   const [quickId, setQuickId] = useState(null)
+  const [showSuggest, setShowSuggest] = useState(false)
+  const [favs, setFavs] = useState({})
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -35,45 +36,101 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <div style={{
-        padding: '64px 16px',
+        padding: '120px 16px 96px',
         background: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1470') center/cover`,
         color: '#fff',
         textAlign: 'center'
       }}>
-        <h1 style={{fontSize:56,fontWeight:800,marginBottom:8}}>Your next meal, delivered</h1>
-        <p style={{fontSize:22,fontWeight:500,marginTop:0,marginBottom:32}}>Discover the best food & drinks near you</p>
-        <div style={{maxWidth:700,margin:'0 auto',display:'flex',gap:8}}>
-          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search for restaurants or cuisines" style={{flex:1,padding:16,border:'none',borderRadius:12,fontSize:18}} />
-          <button onClick={() => fetchRestaurants(q)} className="ff-primary" style={{padding:'16px 28px',fontSize:18}}>Search</button>
+        <h1 style={{fontSize:60,fontWeight:800,marginBottom:10,letterSpacing:0.2}}>Your next meal, delivered</h1>
+        <p style={{fontSize:22,fontWeight:500,marginTop:0,marginBottom:28,opacity:0.95}}>Discover the best food & drinks near you</p>
+        <div style={{maxWidth:840,margin:'0 auto',position:'relative'}}>
+          <div style={{display:'flex',gap:10,background:'rgba(255,255,255,0.15)',backdropFilter:'blur(8px)',padding:8,borderRadius:999,border:'1px solid rgba(255,255,255,0.25)'}}> 
+            <input
+              value={q}
+              onChange={e=>{ setQ(e.target.value); setShowSuggest(true); }}
+              onFocus={()=> setShowSuggest(true)}
+              onBlur={() => setTimeout(()=>setShowSuggest(false), 150)}
+              placeholder="Search for restaurants or cuisines"
+              style={{flex:1,padding:'16px 18px',border:'none',borderRadius:999,fontSize:18,background:'rgba(255,255,255,0.9)',color:'#111'}}
+            />
+            <button onClick={() => { fetchRestaurants(q); setShowSuggest(false); }} className="ff-primary" style={{padding:'16px 28px',fontSize:18,borderRadius:999}}>Search</button>
+          </div>
+          {showSuggest && q && restaurants.length > 0 && (
+            <div style={{position:'absolute',left:0,right:0,top:'100%',marginTop:8,background:'#fff',color:'#111',borderRadius:12,boxShadow:'0 12px 30px rgba(0,0,0,0.15)',overflow:'hidden',zIndex:20}}>
+              {restaurants.slice(0,7).map(item => (
+                <div
+                  key={item._id}
+                  onMouseDown={() => {
+                    if (item._id) {
+                      navigate(`/restaurant/${item._id}/details`, { state: { view: 'ordering' } })
+                    } else {
+                      setQ(item.name || '')
+                      fetchRestaurants(item.name || '')
+                    }
+                    setShowSuggest(false)
+                  }}
+                  style={{display:'flex',alignItems:'center',gap:12,padding:'10px 14px',cursor:'pointer'}}
+                  className="ff-card"
+                >
+                  <div style={{width:40,height:40,borderRadius:8,background:`url(${item.image||'https://picsum.photos/80'}) center/cover`}} />
+                  <div style={{display:'grid'}}>
+                    <span style={{fontWeight:700}}>{item.name}</span>
+                    <span style={{fontSize:12,opacity:0.7}}>{(item.cuisine||[]).join(', ')}</span>
+                  </div>
+                  <div style={{marginLeft:'auto',fontSize:12,opacity:0.7}}>★ {item.rating?.toFixed?.(1) || '0.0'}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      <OfferAlert />
+      
 
-      {offers.length > 0 && (
-        <div style={{background: 'linear-gradient(to right, #ff416c, #ff4b2b)', padding: '48px 16px', color: '#fff'}}>
+      {!q && offers.length > 0 && (
+        <div style={{
+          background: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 40%, #ff8050 100%)',
+          padding: '40px 16px',
+          color: '#fff'
+        }}>
           <div style={{maxWidth:1280,margin:'0 auto'}}>
-            <div style={{fontWeight:800,fontSize:32,margin:'0 0 24px', textAlign: 'center'}}>🔥 Special Offers Just for You! 🔥</div>
-            <div style={{display:'grid',gridAutoFlow:'column',gridAutoColumns:'minmax(320px,1fr)',gap:32,overflowX:'auto',paddingBottom:16}}>
+            <div style={{fontWeight:800,fontSize:30,letterSpacing:0.2,margin:'0 0 6px', textAlign: 'center'}}>🔥 Special Offers Just for You! 🔥</div>
+            <div style={{opacity:0.95,fontSize:15, textAlign:'center', marginBottom:18}}>Handpicked deals from top-rated restaurants near you</div>
+            <div style={{display:'grid',gridAutoFlow:'column',gridAutoColumns:'minmax(320px,1fr)',gap:22,overflowX:'auto',paddingBottom:6}}>
               {offers.map(r => (
                 <div
                   key={r._id}
                   onClick={() => navigate(`/restaurant/${r._id}/details`, { state: { view: 'ordering' } })}
                   className="ff-card fade-in"
-                  style={{cursor: 'pointer', overflow:'hidden', background: '#fff', color: '#000'}}
+                  style={{
+                    cursor: 'pointer',
+                    overflow:'hidden',
+                    background: '#fff',
+                    color: '#000',
+                    borderRadius:16,
+                    boxShadow:'0 12px 30px rgba(0,0,0,0.18)'
+                  }}
                 >
-                  <div style={{height:200,background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}}>
-                    <div style={{padding:12,background:'rgba(0,0,0,0.4)',height:'100%',display:'flex',flexDirection:'column',justifyContent:'flex-end'}}>
-                      <div style={{color:'#fff',fontSize:24,fontWeight:800}}>{r.offer}% OFF</div>
-                      <div style={{color:'#fff',fontSize:16,fontWeight:600}}>UPTO ₹{r.offer*3}</div>
+                  <div style={{position:'relative', height:210, background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}}>
+                    <div style={{position:'absolute', inset:0, background:'linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.15))'}} />
+                    <div style={{position:'absolute', top:12, left:12, background:'#fff', color:'#111', borderRadius:999, padding:'6px 12px', fontWeight:800, fontSize:14}}>
+                      {r.offer}% OFF
+                    </div>
+                    <div style={{position:'absolute', top:12, right:12, background:'rgba(0,0,0,0.65)', color:'#fff', borderRadius:8, padding:'6px 10px', fontSize:14, fontWeight:700}}>
+                      ★ {r.rating?.toFixed?.(1) || '0.0'}
+                    </div>
+                    <div style={{position:'absolute', bottom:12, left:12, color:'#fff'}}>
+                      <div style={{fontSize:22, fontWeight:800, lineHeight:1.2}}>{r.name}</div>
+                      <div style={{opacity:0.9, fontSize:14}}>Upto ₹{r.offer*3}</div>
                     </div>
                   </div>
-                  <div style={{padding:20}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                      <div style={{fontWeight:700,fontSize:20}}>{r.name}</div>
-                      <div style={{background:'var(--primary)',color:'#fff',borderRadius:8,padding:'4px 10px',fontSize:14,fontWeight:700}}>★ {r.rating?.toFixed?.(1) || '0.0'}</div>
+                  <div style={{padding:18}}>
+                    <div style={{color:'#555',fontSize:14,margin:'2px 0 10px'}}>{(r.cuisine||[]).join(', ')}</div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center', fontSize:14}}>
+                      <span style={{fontWeight:600}}>🚴 {r.deliveryTimeMins||30} mins</span>
+                      <span style={{opacity:0.8}}>₹ {((r.priceLevel||2)*10+15)} for one</span>
+                      <span style={{background:'var(--primary)', color:'#fff', borderRadius:999, padding:'8px 12px', fontWeight:700}}>View Deal</span>
                     </div>
-                    <div style={{color:'#666',fontSize:15,margin:'6px 0'}}>{(r.cuisine||[]).join(', ')}</div>
                   </div>
                 </div>
               ))}
@@ -110,18 +167,21 @@ export default function Home() {
                   key={r._id}
                   onClick={() => navigate(`/restaurant/${r._id}/details`, { state: { view: 'ordering' } })}
                   className="ff-card fade-in"
-                  style={{cursor: 'pointer', overflow:'hidden'}}
+                  style={{cursor: 'pointer', overflow:'hidden', borderRadius:16, boxShadow:'0 10px 24px rgba(0,0,0,0.08)', transition:'transform .15s ease'}}
                 >
-                  <div style={{height:200,background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}} />
-                  <div style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.6)',color:'#fff',borderRadius:8,padding:'4px 10px',fontSize:14,fontWeight:700}}>★ {r.rating?.toFixed?.(1) || '0.0'}</div>
-                  <div style={{padding:20}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                      <div style={{fontWeight:700,fontSize:20}}>{r.name}</div>
+                  <div style={{position:'relative',height:200,background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}}>
+                    <button aria-label="favorite" onClick={(e)=>{e.stopPropagation(); setFavs(prev=>({ ...prev, [r._id]: !prev[r._id] }));}} style={{position:'absolute',top:12,left:12,background:'rgba(255,255,255,0.9)',backdropFilter:'blur(6px)',border:'none',borderRadius:999,padding:'6px 8px',cursor:'pointer',boxShadow:'0 4px 10px rgba(0,0,0,0.08)'}}>{favs[r._id] ? '♥' : '♡'}</button>
+                    <div style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.65)',color:'#fff',borderRadius:8,padding:'4px 10px',fontSize:14,fontWeight:700}}>★ {r.rating?.toFixed?.(1) || '0.0'}</div>
+                  </div>
+                  <div style={{padding:18}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'start'}}>
+                      <div style={{fontWeight:800,fontSize:20}}>{r.name}</div>
+                      <div style={{opacity:0.8,fontSize:14}}>₹ {((r.priceLevel||2)*10+15)} for one</div>
                     </div>
-                    <div style={{color:'#666',fontSize:15,margin:'6px 0'}}>{(r.cuisine||[]).join(', ')}</div>
-                    <div style={{marginTop:16,fontSize:15,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                      <span style={{fontWeight:500}}>🚴 {r.deliveryTimeMins||30} mins</span>
-                      <span style={{fontWeight:500}}>₹ {((r.priceLevel||2)*10+15)} for one</span>
+                    <div style={{color:'#666',fontSize:14,margin:'6px 0'}}>{(r.cuisine||[]).join(', ')}</div>
+                    <div style={{display:'flex',gap:12,flexWrap:'wrap',fontSize:13,marginTop:8,color:'#444'}}>
+                      <span>⏱ {r.deliveryTimeMins||30} mins</span>
+                      {r.address && <span>📍 {r.address.split(',')[0]}</span>}
                     </div>
                   </div>
                 </div>

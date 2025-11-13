@@ -4,6 +4,7 @@ import { api } from '../lib/api'
 
 export default function Dining() {
   const [restaurants, setRestaurants] = useState([])
+  const [favs, setFavs] = useState({})
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -36,18 +37,21 @@ export default function Dining() {
                 key={r._id}
                 onClick={() => navigate(`/restaurant/${r._id}/details`, { state: { view: 'dining' } })}
                 className="ff-card fade-in"
-                style={{cursor: 'pointer', overflow:'hidden'}}
+                style={{cursor: 'pointer', overflow:'hidden', borderRadius:16, boxShadow:'0 10px 24px rgba(0,0,0,0.08)', transition:'transform .15s ease'}}
               >
-                <div style={{height:200,background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}} />
-                <div style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.6)',color:'#fff',borderRadius:8,padding:'4px 10px',fontSize:14,fontWeight:700}}>★ {r.rating?.toFixed?.(1) || '0.0'}</div>
-                <div style={{padding:20}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                    <div style={{fontWeight:700,fontSize:20}}>{r.name}</div>
+                <div style={{position:'relative',height:200,background:`url(${r.image||'https://picsum.photos/400?blur=2'}) center/cover`}}>
+                  <button aria-label="favorite" onClick={(e)=>{e.stopPropagation(); setFavs(prev=>({ ...prev, [r._id]: !prev[r._id] }));}} style={{position:'absolute',top:12,left:12,background:'rgba(255,255,255,0.9)',backdropFilter:'blur(6px)',border:'none',borderRadius:999,padding:'6px 8px',cursor:'pointer',boxShadow:'0 4px 10px rgba(0,0,0,0.08)'}}>{favs[r._id] ? '♥' : '♡'}</button>
+                  <div style={{position:'absolute',top:12,right:12,background:'rgba(0,0,0,0.65)',color:'#fff',borderRadius:8,padding:'4px 10px',fontSize:14,fontWeight:700}}>★ {r.rating?.toFixed?.(1) || '0.0'}</div>
+                </div>
+                <div style={{padding:18}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'start'}}>
+                    <div style={{fontWeight:800,fontSize:20}}>{r.name}</div>
+                    <div style={{opacity:0.8,fontSize:14}}>₹ {((r.priceLevel||2)*10+15)} for one</div>
                   </div>
-                  <div style={{color:'#666',fontSize:15,margin:'6px 0'}}>{(r.cuisine||[]).join(', ')}</div>
-                  <div style={{marginTop:16,fontSize:15,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                    <span style={{fontWeight:500}}>🚴 {r.deliveryTimeMins||30} mins</span>
-                    <span style={{fontWeight:500}}>₹ {((r.priceLevel||2)*10+15)} for one</span>
+                  <div style={{color:'#666',fontSize:14,margin:'6px 0'}}>{(r.cuisine||[]).join(', ')}</div>
+                  <div style={{display:'flex',gap:12,flexWrap:'wrap',fontSize:13,marginTop:8,color:'#444'}}>
+                    <span>⏱ {r.deliveryTimeMins||30} mins</span>
+                    {r.address && <span>📍 {r.address.split(',')[0]}</span>}
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 
 const authRoutes = require('./routes/auth');
+const authRoutesExtra = require('../routes/authRoutes');
 const restaurantRoutes = require('./routes/restaurants');
 const menuRoutes = require('./routes/menus');
 const orderRoutes = require('./routes/orders');
@@ -13,7 +14,7 @@ const devRoutes = require('./routes/dev');
 
 const app = express();
 
-const origins = (process.env.CLIENT_ORIGINS || 'http://localhost:5173').split(',');
+const origins = (process.env.CLIENT_ORIGINS || 'http://localhost:5174').split(',');
 app.use(cors({ origin: origins, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutesExtra);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/orders', orderRoutes);
