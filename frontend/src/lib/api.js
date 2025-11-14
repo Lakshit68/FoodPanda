@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'https://food-panda-zeta.vercel.app/api',
   withCredentials: true
 })
 
