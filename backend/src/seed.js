@@ -139,7 +139,6 @@ const restaurants = [
     offer: 10
   }
 ];
-
 const menuItems = {
   'The Italian Bistro': [
     { name: 'Margherita Pizza', description: 'Classic cheese and tomato pizza', price: 12, image: 'https://images.unsplash.com/photo-1598021680942-84f936e0f559?q=80&w=1374', category: 'Pizza', isSpecial: true },

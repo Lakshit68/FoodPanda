@@ -40,14 +40,11 @@ router.get('/', async (req, res, next) => {
 router.get('/offers', async (req, res, next) => {
   try {
     await connectDB();
-<<<<<<< HEAD
-    const doc = await Restaurant.findById(req.params.id);
-    if (!doc) return res.status(404).json({ message: 'Not found' });
-    res.json(doc);
-=======
-    const offers = await Restaurant.find({ offer: { $gt: 0 } }).sort({ offer: -1 }).limit(5);
+    const limit = Number(req.query.limit || 8)
+    const offers = await Restaurant.find({ offer: { $gt: 0 } })
+      .sort({ offer: -1, rating: -1 })
+      .limit(limit);
     res.json(offers);
->>>>>>> 05826c1 (update)
   } catch (e) { next(e); }
 });
 
@@ -64,14 +61,9 @@ router.get('/:id/menu', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     await connectDB();
-<<<<<<< HEAD
-    const offers = await Restaurant.find({ offer: { $gt: 0 } }).sort({ offer: -1 }).limit(5);
-    res.json(offers);
-=======
     const doc = await Restaurant.findById(req.params.id);
     if (!doc) return res.status(404).json({ message: 'Not found' });
     res.json(doc);
->>>>>>> 05826c1 (update)
   } catch (e) { next(e); }
 });
 

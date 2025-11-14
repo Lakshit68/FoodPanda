@@ -24,9 +24,24 @@ export default function Home() {
   }
 
   async function fetchOffers() {
-    const { data } = await api.get('/restaurants/offers')
-    setOffers(data || [])
+    try {
+      const { data } = await api.get('/restaurants/offers')
+      setOffers(data || [])
+    } catch (err) {
+      if (err?.response?.status !== 404) {
+        console.warn('Failed to load offers:', err?.message || err)
+      }
+      setOffers([])
+    }
   }
+
+  // Compute offers to display (fallback to top restaurants if no offers)
+  const displayOffers = (offers && offers.length > 0)
+    ? offers
+    : (restaurants || []).slice(0, 8).map(r => ({
+        ...r,
+        offer: Math.max(10, Math.min(60, Math.round(((4.8 - (r.rating || 4)) * 20) + 20)))
+      }))
 
   function handleCuisineClick(cuisine) {
     setQ(cuisine.name)
@@ -87,7 +102,7 @@ export default function Home() {
 
       
 
-      {!q && offers.length > 0 && (
+      {!q && displayOffers.length > 0 && (
         <div style={{
           background: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 40%, #ff8050 100%)',
           padding: '40px 16px',
@@ -97,7 +112,7 @@ export default function Home() {
             <div style={{fontWeight:800,fontSize:30,letterSpacing:0.2,margin:'0 0 6px', textAlign: 'center'}}>🔥 Special Offers Just for You! 🔥</div>
             <div style={{opacity:0.95,fontSize:15, textAlign:'center', marginBottom:18}}>Handpicked deals from top-rated restaurants near you</div>
             <div style={{display:'grid',gridAutoFlow:'column',gridAutoColumns:'minmax(320px,1fr)',gap:22,overflowX:'auto',paddingBottom:6}}>
-              {offers.map(r => (
+              {displayOffers.map(r => (
                 <div
                   key={r._id}
                   onClick={() => navigate(`/restaurant/${r._id}/details`, { state: { view: 'ordering' } })}
