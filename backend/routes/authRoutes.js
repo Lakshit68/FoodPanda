@@ -36,7 +36,10 @@ router.post('/google-login', async (req, res) => {
         res.cookie('token', jwtToken, { httpOnly: true, sameSite: isProd ? 'none' : 'lax', secure: isProd, path: '/' });
         res.json({ message: 'Logged in with Google', user: { _id: user._id, fullName: user.fullName, email: user.email, isPremium: user.isPremium } });
     } catch (error) {
-        console.error('Google authentication error:', error);
+        console.error('Google authentication error:', {
+            message: error.message,
+            stack: error.stack,
+        });
         res.status(401).json({ error: 'Invalid Google token' });
     }
 });
