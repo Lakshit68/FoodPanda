@@ -10,6 +10,7 @@ const menuRoutes = require('./routes/menus');
 const orderRoutes = require('./routes/orders');
 const reviewRoutes = require('./routes/reviews');
 const bookingRoutes = require('./routes/bookings');
+const paymentRoutes = require('./routes/payments');
 const devRoutes = require('./routes/dev');
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api/dev', devRoutes);
 
 app.use((err, req, res, next) => {

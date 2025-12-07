@@ -1,0 +1,115 @@
+import { useEffect, useState } from 'react'
+import { useCart } from '../state/CartContext.jsx'
+import { useToast } from '../state/ToastContext.jsx'
+import { useAuth } from '../state/AuthContext.jsx'
+import { api } from '../lib/api.js'
+import { useNavigate } from 'react-router-dom'
+
+export default function Checkout(){
+  const { items, total, clear } = useCart()
+  const { user } = useAuth()
+  const [restaurant, setRestaurant] = useState(null)
+  const [address, setAddress] = useState('')
+  const navigate = useNavigate()
+  const toast = useToast()
+
+  useEffect(() => {
+    if (items.length > 0) {
+      api.get(`/restaurants/${items[0].restaurant}`)
+        .then(({ data }) => setRestaurant(data))
+    }
+  }, [items])
+
+  const deliveryFee = user?.isPremium ? 0 : restaurant?.deliveryFee || 0
+  const taxes = Math.round(total * 0.18)
+  const grandTotal = total + deliveryFee + taxes
+
+  async function placeOrder() {
+    if (!address.trim()) {
+      toast.error('Please enter a delivery address');
+      return;
+    }
+    try {
+      // Create Razorpay order on backend
+      const { data: razorpayOrder } = await api.post('/payments/create-order', { amount: grandTotal * 100 }); // amount in paise
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'FoodTown',
+        description: `Order at ${restaurant.name}`,
+        order_id: razorpayOrder.id,
+        handler: async function (response) {
+          try {
+            // Verify payment on backend and place order
+            const { data: order } = await api.post('/payments/verify-and-place-order', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              restaurant: restaurant._id,
+              items: items.map(i => ({ menuItem: i._id, quantity: i.qty })),
+              total,
+              address,
+              deliveryFee
+            });
+            clear();
+            navigate('/order-confirmation', { state: { order: { ...order, restaurantName: restaurant.name } } });
+          } catch (err) {
+            console.error(err);
+            toast.error('Failed to confirm order. Please contact support.');
+          }
+        },
+        prefill: {
+          name: user?.fullName || '',
+          email: user?.email || '',
+          contact: ''
+        },
+        theme: {
+          color: 'var(--brand)'
+        }
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error(error);
+      toast.error('Payment failed. Please try again.');
+    }
+  }
+
+  return (
+    <div style={{maxWidth:1200,margin:'40px auto',padding:'0 24px'}}>
+      <h2 style={{marginBottom:24,fontSize:32,fontWeight:800}}>Your Order</h2>
+      <div style={{display:'grid',gridTemplateColumns:'2.5fr 1fr',gap:32}}>
+        <div>
+          <div className="ff-card" style={{padding:28,marginBottom:24}}>
+            <div style={{fontWeight:700,marginBottom:16,fontSize:20}}>Deliver to</div>
+            <div style={{display:'grid',gap:16}}>
+              <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Address line" className="ff-outline" style={{padding:16,fontSize:16}} />
+              <input placeholder="City" className="ff-outline" style={{padding:16,fontSize:16}} />
+              <input placeholder="Phone" className="ff-outline" style={{padding:16,fontSize:16}} />
+            </div>
+          </div>
+          <div className="ff-card" style={{padding:28,marginBottom:24}}>
+            <div style={{fontWeight:700,marginBottom:16,fontSize:20}}>Special instructions</div>
+            <textarea placeholder="Add cooking instructions or special requests" rows={5} className="ff-outline" style={{padding:16,width:'100%',fontSize:16,resize:'vertical',minHeight:'120px'}} />
+          </div>
+        </div>
+        <div>
+          <div className="ff-card" style={{padding:16}}>
+            <div style={{fontWeight:800,marginBottom:10}}>Bill Details</div>
+            <div style={{display:'grid',gap:6}}>
+              <div style={{display:'flex',justifyContent:'space-between'}}><span>Subtotal</span><span>₹{total}</span></div>
+              <div style={{display:'flex',justifyContent:'space-between'}}>
+                <span>Delivery Fee</span>
+                {user?.isPremium ? <span><del>₹{restaurant?.deliveryFee}</del> FREE</span> : <span>₹{deliveryFee}</span>}
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between'}}><span>Taxes</span><span>₹{taxes}</span></div>
+              <div style={{display:'flex',justifyContent:'space-between',fontWeight:800}}><span>Grand Total</span><span>₹{grandTotal}</span></div>
+            </div>
+            <button onClick={placeOrder} className="ff-primary" style={{marginTop:12,width:'100%',padding:'12px'}}>Place Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -170,6 +170,89 @@ export default function Home() {
         </div>
       )}
 
+      {/* Home Delivery / Dining Toggle */}
+      {!q && (
+        <div style={{background: '#f8f9fa', padding: '32px 16px'}}>
+          <div style={{maxWidth:1280,margin:'0 auto',display:'flex',justifyContent:'center'}}>
+            <div style={{
+              display: 'flex',
+              gap: 8,
+              background: '#fff',
+              padding: 6,
+              borderRadius: 16,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(0,0,0,0.06)'
+            }}>
+              <button
+                onClick={() => {}}
+                style={{
+                  padding: '12px 32px',
+                  borderRadius: 12,
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)'
+                  e.currentTarget.style.transform = 'translateY(-1px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Home Delivery
+              </button>
+              <button
+                onClick={() => navigate('/dining')}
+                style={{
+                  padding: '12px 32px',
+                  borderRadius: 12,
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#666',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f8f9ff'
+                  e.currentTarget.style.color = '#667eea'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = '#666'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Dining
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{background: 'var(--bg)', padding: '48px 16px'}}>
         <div style={{maxWidth:1280,margin:'0 auto'}}>
           <div style={{fontWeight:800,fontSize:28,margin:'0 0 24px'}}>

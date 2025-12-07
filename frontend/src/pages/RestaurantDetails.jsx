@@ -79,66 +79,114 @@ export default function RestaurantDetails() {
   const menuByCategory = groupByCategory(menu)
 
   return (
-    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 16px' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #e8ecf4 50%, #f0f4ff 100%)',
+      padding: '80px 0 40px'
+    }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 20px' }}>
       
       {/* Header Section */}
       {restaurant && (
-        <div style={{ padding: '24px 0' }}>
+        <div style={{ padding: '32px 0 24px' }}>
           <div className="ff-card"
             style={{
-              padding: 24,
-              background: 'linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
-              borderRadius: 20
+              padding: 32,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              boxShadow: '0 20px 60px rgba(102, 126, 234, 0.25)',
+              borderRadius: 24,
+              color: '#fff',
+              position: 'relative',
+              overflow: 'hidden'
             }}>
+            {/* Decorative background pattern */}
+            <div style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 300,
+              height: 300,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '50%',
+              filter: 'blur(60px)'
+            }} />
             
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '120px 1fr auto',
-              gap: 24,
-              alignItems: 'center'
+              gridTemplateColumns: '140px 1fr auto',
+              gap: 28,
+              alignItems: 'center',
+              position: 'relative',
+              zIndex: 1
             }}>
               
               {/* Restaurant Image */}
               <div style={{
-                width: 120,
-                height: 120,
-                borderRadius: 16,
+                width: 140,
+                height: 140,
+                borderRadius: 20,
                 background: `url(${restaurant.image || 'https://picsum.photos/200'}) center/cover`,
-                boxShadow: '0 8px 20px rgba(0,0,0,0.15)'
+                boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
+                border: '4px solid rgba(255,255,255,0.3)'
               }} />
 
               {/* Restaurant Info */}
               <div>
-                <h1 style={{ fontSize: 40, fontWeight: 800, margin: 0 }}>{restaurant.name}</h1>
-                <div style={{ color: '#666', marginTop: 6 }}>{(restaurant.cuisine || []).join(', ')}</div>
-                <div style={{ color: '#777', marginTop: 2 }}>{restaurant.address}</div>
+                <h1 style={{ fontSize: 42, fontWeight: 900, margin: 0, color: '#fff', letterSpacing: '-0.5px' }}>
+                  {restaurant.name}
+                </h1>
+                <div style={{ color: 'rgba(255,255,255,0.9)', marginTop: 8, fontSize: 16, fontWeight: 500 }}>
+                  {(restaurant.cuisine || []).join(' • ')}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.8)', marginTop: 6, fontSize: 14 }}>
+                  📍 {restaurant.address}
+                </div>
 
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 12 }}>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 16, flexWrap: 'wrap' }}>
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 6,
-                    padding: '6px 10px',
-                    background: '#fff',
-                    borderRadius: 999,
+                    gap: 8,
+                    padding: '8px 16px',
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 12,
                     fontWeight: 700,
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
+                    fontSize: 15,
+                    border: '1px solid rgba(255,255,255,0.3)'
                   }}>
-                    <span style={{ color: 'var(--accent)' }}>★</span>
+                    <span style={{ color: '#ffd700', fontSize: 18 }}>★</span>
                     <span>{restaurant.rating?.toFixed?.(1) || '0.0'}</span>
+                    <span style={{ opacity: 0.8, fontWeight: 400, marginLeft: 4 }}>
+                      ({restaurant.ratingCount || 0} reviews)
+                    </span>
                   </div>
 
-                  <div style={{ opacity: 0.6 }}>•</div>
-
                   <div style={{
-                    padding: '6px 10px',
-                    background: '#fff',
-                    borderRadius: 999,
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
+                    padding: '8px 16px',
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 12,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    border: '1px solid rgba(255,255,255,0.3)'
                   }}>
                     ⏱ {restaurant.deliveryTimeMins} mins
                   </div>
+
+                  {restaurant.isOpen !== false && (
+                    <div style={{
+                      padding: '8px 16px',
+                      background: 'rgba(76, 175, 80, 0.3)',
+                      backdropFilter: 'blur(10px)',
+                      borderRadius: 12,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      border: '1px solid rgba(76, 175, 80, 0.5)'
+                    }}>
+                      🟢 Open Now
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -147,17 +195,30 @@ export default function RestaurantDetails() {
                 <div>
                   <button
                     onClick={() => setIsBookingModalOpen(true)}
-                    className="ff-primary"
                     style={{
-                      padding: '12px 20px',
-                      fontSize: 18,
-                      borderRadius: 12,
-                      boxShadow: '0 10px 20px rgba(255,75,43,0.35)'
+                      padding: '14px 28px',
+                      fontSize: 16,
+                      fontWeight: 700,
+                      borderRadius: 14,
+                      background: '#fff',
+                      color: '#667eea',
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                      transition: 'transform 0.2s, box-shadow 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 15px 40px rgba(0,0,0,0.25)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)'
                     }}>
-                    Book a Table
+                    📅 Book a Table
                   </button>
-                  <div style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
-                    Real-time confirmation
+                  <div style={{ fontSize: 12, opacity: 0.9, marginTop: 8, textAlign: 'center' }}>
+                    Instant confirmation
                   </div>
                 </div>
               )}
@@ -177,49 +238,65 @@ export default function RestaurantDetails() {
       )}
 
       {/* Tabs */}
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ marginBottom: 32 }}>
         <nav style={{
           display: 'flex',
-          gap: 12,
-          background: 'rgba(0,0,0,0.03)',
-          padding: 6,
-          borderRadius: 999,
-          width: 'fit-content'
+          gap: 8,
+          background: '#f8f9fa',
+          padding: 8,
+          borderRadius: 16,
+          width: 'fit-content',
+          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)'
         }}>
           {view === 'ordering' && (
             <button
               onClick={() => setActiveTab('menu')}
               style={{
-                padding: '10px 16px',
-                borderRadius: 999,
-                background: activeTab === 'menu' ? '#fff' : 'transparent',
-                boxShadow: activeTab === 'menu' ? '0 6px 14px rgba(0,0,0,0.08)' : 'none',
-                fontWeight: 700
+                padding: '12px 24px',
+                borderRadius: 12,
+                background: activeTab === 'menu' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+                color: activeTab === 'menu' ? '#fff' : '#666',
+                boxShadow: activeTab === 'menu' ? '0 4px 12px rgba(102, 126, 234, 0.3)' : 'none',
+                fontWeight: 700,
+                fontSize: 15,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
               }}>
-              Menu
+              🍽️ Menu
             </button>
           )}
           <button
             onClick={() => setActiveTab('about')}
             style={{
-              padding: '10px 16px',
-              borderRadius: 999,
-              background: activeTab === 'about' ? '#fff' : 'transparent',
-              boxShadow: activeTab === 'about' ? '0 6px 14px rgba(0,0,0,0.08)' : 'none',
-              fontWeight: 700
+              padding: '12px 24px',
+              borderRadius: 12,
+              background: activeTab === 'about' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+              color: activeTab === 'about' ? '#fff' : '#666',
+              boxShadow: activeTab === 'about' ? '0 4px 12px rgba(102, 126, 234, 0.3)' : 'none',
+              fontWeight: 700,
+              fontSize: 15,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
             }}>
-            About
+            ℹ️ About
           </button>
           <button
             onClick={() => setActiveTab('reviews')}
             style={{
-              padding: '10px 16px',
-              borderRadius: 999,
-              background: activeTab === 'reviews' ? '#fff' : 'transparent',
-              boxShadow: activeTab === 'reviews' ? '0 6px 14px rgba(0,0,0,0.08)' : 'none',
-              fontWeight: 700
+              padding: '12px 24px',
+              borderRadius: 12,
+              background: activeTab === 'reviews' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+              color: activeTab === 'reviews' ? '#fff' : '#666',
+              boxShadow: activeTab === 'reviews' ? '0 4px 12px rgba(102, 126, 234, 0.3)' : 'none',
+              fontWeight: 700,
+              fontSize: 15,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
             }}>
-            Reviews
+            ⭐ Reviews ({reviews.length})
           </button>
         </nav>
       </div>
@@ -228,45 +305,90 @@ export default function RestaurantDetails() {
       {activeTab === 'menu' && view === 'ordering' && (
         <div>
           {Object.entries(menuByCategory).map(([category, items]) => (
-            <div key={category} style={{ marginBottom: 32 }}>
-              <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 18 }}>{category}</h2>
+            <div key={category} style={{ marginBottom: 48 }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 12, 
+                marginBottom: 24 
+              }}>
+                <h2 style={{ 
+                  fontSize: 32, 
+                  fontWeight: 900, 
+                  margin: 0,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  {category}
+                </h2>
+                <div style={{
+                  flex: 1,
+                  height: 2,
+                  background: 'linear-gradient(to right, #667eea, transparent)',
+                  borderRadius: 2
+                }} />
+                <div style={{
+                  padding: '4px 12px',
+                  background: '#f0f4ff',
+                  borderRadius: 12,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: '#667eea'
+                }}>
+                  {items.length} {items.length === 1 ? 'item' : 'items'}
+                </div>
+              </div>
 
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                  gap: 24
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: 28
                 }}
               >
                 {items.map(item => (
-                  
-                  /* ---------------- FIXED CARD ---------------- */
                   <div
                     key={item._id}
                     className="ff-card"
                     style={{
-                      borderRadius: 16,
+                      borderRadius: 20,
                       overflow: 'hidden',
                       background: '#fff',
-                      boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
-                      transition: 'transform .2s ease, box-shadow .2s ease'
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      border: '1px solid rgba(0,0,0,0.04)',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-8px)'
+                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(102, 126, 234, 0.15)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'
                     }}
                   >
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden' }}>
                       {item.isSpecial && (
                         <div
                           style={{
                             position: 'absolute',
-                            top: 12,
-                            left: 12,
-                            background: 'var(--brand)',
+                            top: 16,
+                            left: 16,
+                            background: 'linear-gradient(135deg, #ff6b6b, #ee5a6f)',
                             color: '#fff',
-                            padding: '6px 12px',
-                            borderRadius: 999,
+                            padding: '8px 16px',
+                            borderRadius: 12,
                             fontWeight: 700,
-                            zIndex: 10
+                            fontSize: 12,
+                            zIndex: 10,
+                            boxShadow: '0 4px 12px rgba(238, 90, 111, 0.4)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
                           }}>
-                          Special
+                          ⭐ Special
                         </div>
                       )}
 
@@ -276,26 +398,40 @@ export default function RestaurantDetails() {
                         loading="lazy"
                         style={{
                           width: '100%',
-                          height: 200,
+                          height: 220,
                           objectFit: 'cover',
-                          display: 'block'
+                          display: 'block',
+                          transition: 'transform 0.3s ease'
                         }}
                         onError={e => (e.currentTarget.src = getFallbackImage(item, category))}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)'
+                        }}
                       />
                     </div>
 
-                    <div style={{ padding: 20 }}>
-                      <div style={{ fontWeight: 800, fontSize: 20 }}>
+                    <div style={{ padding: 24 }}>
+                      <div style={{ 
+                        fontWeight: 800, 
+                        fontSize: 22,
+                        marginBottom: 8,
+                        color: '#1a1a1a',
+                        lineHeight: 1.3
+                      }}>
                         {item.name}
                       </div>
 
                       <div
                         style={{
                           color: '#666',
-                          marginTop: 8,
+                          marginTop: 4,
                           fontSize: 15,
-                          lineHeight: 1.5,
-                          minHeight: 48
+                          lineHeight: 1.6,
+                          minHeight: 48,
+                          marginBottom: 16
                         }}
                       >
                         {item.description}
@@ -303,103 +439,336 @@ export default function RestaurantDetails() {
 
                       <div
                         style={{
-                          marginTop: 16,
                           display: 'flex',
                           justifyContent: 'space-between',
-                          alignItems: 'center'
+                          alignItems: 'center',
+                          paddingTop: 16,
+                          borderTop: '1px solid #f0f0f0'
                         }}
                       >
-                        <div style={{ fontSize: 18, fontWeight: 800 }}>₹{item.price}</div>
+                        <div style={{ 
+                          fontSize: 24, 
+                          fontWeight: 900,
+                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text'
+                        }}>
+                          ₹{item.price}
+                        </div>
 
                         <button
                           onClick={() => add(item)}
                           style={{
-                            width: 44,
-                            height: 44,
+                            width: 50,
+                            height: 50,
                             borderRadius: '50%',
-                            background: 'var(--brand)',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             color: '#fff',
                             border: 'none',
                             cursor: 'pointer',
-                            boxShadow: '0 6px 16px rgba(255,75,43,0.35)',
+                            boxShadow: '0 8px 20px rgba(102, 126, 234, 0.4)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            lineHeight: 0
+                            lineHeight: 0,
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.1)'
+                            e.currentTarget.style.boxShadow = '0 12px 28px rgba(102, 126, 234, 0.5)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)'
+                            e.currentTarget.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.4)'
                           }}
                         >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                           </svg>
                         </button>
                       </div>
                     </div>
                   </div>
-
                 ))}
               </div>
             </div>
           ))}
+          
+          {/* View Cart Button - Below Menu */}
+          {items.length > 0 && (
+            <div style={{
+              marginTop: 40,
+              display: 'flex',
+              justifyContent: 'center',
+              paddingBottom: 40
+            }}>
+              <button
+                onClick={() => navigate('/cart')}
+                style={{
+                  padding: '16px 48px',
+                  fontSize: 18,
+                  fontWeight: 700,
+                  borderRadius: 16,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  boxShadow: '0 12px 40px rgba(102, 126, 234, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 16px 50px rgba(102, 126, 234, 0.5)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(102, 126, 234, 0.4)'
+                }}>
+                🧾 View Cart ({items.length} {items.length === 1 ? 'item' : 'items'})
+              </button>
+            </div>
+          )}
         </div>
       )}
 
       {/* ABOUT TAB */}
       {activeTab === 'about' && restaurant && (
-        <div className="ff-card" style={{ padding: 24 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700 }}>About {restaurant.name}</h2>
-          <p style={{ lineHeight: 1.6 }}>{restaurant.about}</p>
+        <div style={{ display: 'grid', gap: 24 }}>
+          <div className="ff-card" style={{ 
+            padding: 32,
+            background: 'linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%)',
+            borderRadius: 24,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
+          }}>
+            <h2 style={{ 
+              fontSize: 32, 
+              fontWeight: 900,
+              marginBottom: 20,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              About {restaurant.name}
+            </h2>
+            <p style={{ 
+              lineHeight: 1.8, 
+              fontSize: 16,
+              color: '#444',
+              marginBottom: 0
+            }}>
+              {restaurant.about || 'Experience the finest culinary delights at ' + restaurant.name + '. We are committed to serving you the best quality food with exceptional service.'}
+            </p>
+          </div>
 
-          <div style={{ marginTop: 24 }}>
-            <h3 style={{ fontWeight: 700 }}>Contact Information</h3>
-            <p><strong>Address:</strong> {restaurant.address}</p>
-            <p><strong>Phone:</strong> {restaurant.contact?.phone}</p>
-            <p><strong>Email:</strong> {restaurant.contact?.email}</p>
+          <div className="ff-card" style={{ 
+            padding: 32,
+            borderRadius: 24,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
+          }}>
+            <h3 style={{ 
+              fontWeight: 800, 
+              fontSize: 24,
+              marginBottom: 24,
+              color: '#1a1a1a'
+            }}>
+              📞 Contact Information
+            </h3>
+            <div style={{ display: 'grid', gap: 20 }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'start',
+                gap: 16,
+                padding: 20,
+                background: '#f8f9ff',
+                borderRadius: 16
+              }}>
+                <div style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24
+                }}>
+                  📍
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, marginBottom: 4, color: '#1a1a1a' }}>Address</div>
+                  <div style={{ color: '#666', fontSize: 15 }}>{restaurant.address}</div>
+                </div>
+              </div>
+
+              {restaurant.contact?.phone && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'start',
+                  gap: 16,
+                  padding: 20,
+                  background: '#f8f9ff',
+                  borderRadius: 16
+                }}>
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24
+                  }}>
+                    📞
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 4, color: '#1a1a1a' }}>Phone</div>
+                    <div style={{ color: '#666', fontSize: 15 }}>{restaurant.contact.phone}</div>
+                  </div>
+                </div>
+              )}
+
+              {restaurant.contact?.email && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'start',
+                  gap: 16,
+                  padding: 20,
+                  background: '#f8f9ff',
+                  borderRadius: 16
+                }}>
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24
+                  }}>
+                    ✉️
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 4, color: '#1a1a1a' }}>Email</div>
+                    <div style={{ color: '#666', fontSize: 15 }}>{restaurant.contact.email}</div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
 
       {/* REVIEWS TAB */}
       {activeTab === 'reviews' && (
-        <div className="ff-card" style={{ padding: 24 }}>
-          <h2 style={{ marginBottom: 16 }}>Reviews</h2>
-          {reviews.map(r => (
-            <div key={r._id} style={{ padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <strong>{r.user?.fullName || 'Anonymous'}</strong>
-                <div><span style={{ color: 'var(--accent)' }}>★</span> {r.rating.toFixed(1)}</div>
-              </div>
-              <p style={{ color: '#666', marginTop: 6 }}>{r.comment}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Floating Cart Button */}
-      {view === 'ordering' && items.length > 0 && (
-        <div style={{
-          position: 'fixed',
-          bottom: 'calc(72px + env(safe-area-inset-bottom))',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 1000
-        }}>
-          <button
-            onClick={() => navigate('/cart')}
-            className="ff-primary"
-            style={{
-              padding: '12px 22px',
-              fontSize: 16,
-              borderRadius: 999,
-              boxShadow: '0 10px 24px rgba(0,0,0,0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10
+        <div>
+          {reviews.length === 0 ? (
+            <div className="ff-card" style={{ 
+              padding: 48,
+              textAlign: 'center',
+              borderRadius: 24,
+              background: '#f8f9ff'
             }}>
-            🧾 Get Your Bill
-          </button>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>💬</div>
+              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: '#1a1a1a' }}>
+                No reviews yet
+              </h3>
+              <p style={{ color: '#666' }}>
+                Be the first to share your experience!
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: 20 }}>
+              {reviews.map((r, index) => (
+                <div 
+                  key={r._id} 
+                  className="ff-card" 
+                  style={{ 
+                    padding: 28,
+                    borderRadius: 20,
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                    border: '1px solid rgba(0,0,0,0.04)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(102, 126, 234, 0.12)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'start',
+                    marginBottom: 12
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        background: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: 18
+                      }}>
+                        {(r.user?.fullName || 'A')[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a1a' }}>
+                          {r.user?.fullName || 'Anonymous'}
+                        </div>
+                        <div style={{ color: '#999', fontSize: 13, marginTop: 2 }}>
+                          {new Date(r.createdAt || Date.now()).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '8px 14px',
+                      background: 'linear-gradient(135deg, #fff5e6, #ffe8cc)',
+                      borderRadius: 12,
+                      fontWeight: 700,
+                      fontSize: 15
+                    }}>
+                      <span style={{ color: '#ff9800', fontSize: 18 }}>★</span>
+                      <span style={{ color: '#ff6b00' }}>{r.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                  <p style={{ 
+                    color: '#444', 
+                    marginTop: 8,
+                    lineHeight: 1.7,
+                    fontSize: 15
+                  }}>
+                    {r.comment}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
+      </div>
     </div>
   )
 }
