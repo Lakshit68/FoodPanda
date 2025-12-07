@@ -1,4 +1,1 @@
-- [x] Update Auth.jsx to send credential instead of access_token
-- [x] Update authRoutes.js to handle user creation and login
-- [x] Ensure environment variables are set (user action)
-- [x] Test backend endpoints: invalid token returns 401, /me returns false when not logged in
+
